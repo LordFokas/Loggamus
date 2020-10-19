@@ -1,0 +1,32 @@
+{
+  "name": "loggamus",
+  "version": "1.0.0",
+  "description": "Flexible logger for NodeJS. Includes a \"pretty printer\" to write formatted text to the console.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LordFokas/Loggamus.git"
+  },
+  "keywords": [
+    "nodejs",
+    "log",
+    "console",
+    "color",
+    "config"
+  ],
+  "author": "LordFokas",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LordFokas/Loggamus/issues"
+  },
+  "homepage": "https://github.com/LordFokas/Loggamus#readme",
+  "dependencies": {
+    "caller-id": "^0.1.0"
+  }
+}
