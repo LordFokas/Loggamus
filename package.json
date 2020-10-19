@@ -1,6 +1,7 @@
 {
   "name": "loggamus",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "type": "module",
   "description": "Flexible logger for NodeJS. Includes a \"pretty printer\" to write formatted text to the console.",
   "main": "index.js",
   "directories": {
