@@ -1,6 +1,2 @@
-import { Logger, LogLevel } from './lib/Logger.js';
-import { PrettyPrinter } from './lib/PrettyPrinter.js';
-
-export Logger;
-export LogLevel;
-export PrettyPrinter;
+export { Logger, LogLevel } from './lib/Logger.js';
+export { PrettyPrinter } from './lib/PrettyPrinter.js';
