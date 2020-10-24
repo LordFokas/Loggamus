@@ -101,16 +101,18 @@ pretty.style('hidden').write('Hidden is also weird, at least in my terminal. But
 ## Overriding defaults  --  Don't like my style or configs? Define yours!
 ( examples/02-override.js)
 ```js
-import { Logger, LogLevel, Pipe, Output } from '../index.js';
+import { Logger, LogLevel, Pipe, Output, Transformer } from '../index.js';
 Logger.setAppRoot(3); // paths in stack traces start 2 levels above this file
 
 Logger.setDefault(new Logger('root', {
 	minlevel: LogLevel.WARN, // Logs below WARN will not log
 	mintrace: LogLevel.FATAL, // Logs below FATAL won't display stack traces
 	tracedepth: 5, // stack traces are at most 5 stack frames deep
-	output: new Pipe( // log receptacle that replicates logs it receives between its children
-		new Output.Terminal(), // log receptacle that writes pretty logs to terminal
-		new Output.File('./examples.log') // log receptacle that writes raw logs to disk
+	output: new Pipe( // any pipe (except outputs) replicates logs it receives between its children
+		new Output.Terminal(), // output that writes pretty logs to terminal
+		new Transformer.MetadataHeader( // transformer that adds metadata to the log message
+			new Output.File('./examples.log') // output that writes raw logs to disk
+		)
 	)
 }));
 
@@ -140,14 +142,14 @@ child.fine("This level of information is so fine that it probably doesn't matter
 
 Output to `example.log` :
 ```
-========================================
+********************************************************************************
 {
   logger: 'root',
-  timestamp: '2020-10-24T05:29:40.782Z',
+  timestamp: '2020-10-24T23:43:37.820Z',
   level: 'FATAL',
   levelid: 5,
   caller: '<Lambda Function>',
-  source: 'loggamus/examples/02-override.js:19',
+  source: 'loggamus/examples/02-override.js:20',
   metadata: {
     subject: 'this is custom metadata',
     function: 'anything we add here travels with our logs',
@@ -155,45 +157,45 @@ Output to `example.log` :
     correlationid: 'deadbeef-1337-cafe-babe-0123456789fe'
   }
 }
-----------------------------------------
+--------------------------------------------------------------------------------
 This is a fatal error!
-@ <Lambda Function>  ( loggamus/examples/02-override.js:19 )
-@ <Lambda Function>  ( loggamus/examples/02-override.js:25 )
+@ <Lambda Function>  ( loggamus/examples/02-override.js:20 )
+@ <Lambda Function>  ( loggamus/examples/02-override.js:26 )
 @ ModuleJob.run  ( internal/modules/esm/module_job.js:146 )
 @ Loader.import  ( internal/modules/esm/loader.js:165 )
 @ Object.loadESM  ( internal/process/esm_loader.js:68 )
 
 
-========================================
+********************************************************************************
 
 
-========================================
+********************************************************************************
 {
   logger: 'root',
-  timestamp: '2020-10-24T05:29:40.793Z',
+  timestamp: '2020-10-24T23:43:37.832Z',
   level: 'ERROR',
   levelid: 4,
   caller: 'named_function',
-  source: 'loggamus/examples/02-override.js:28'
+  source: 'loggamus/examples/02-override.js:29'
 }
-----------------------------------------
+--------------------------------------------------------------------------------
 This is a recoverable error...
 
-========================================
+********************************************************************************
 
 
-========================================
+********************************************************************************
 {
   logger: 'root/child-01',
-  timestamp: '2020-10-24T05:29:40.797Z',
+  timestamp: '2020-10-24T23:43:37.834Z',
   level: 'WARN',
   levelid: 3,
   caller: '<Lambda Function>',
-  source: 'loggamus/examples/02-override.js:32'
+  source: 'loggamus/examples/02-override.js:34'
 }
-----------------------------------------
+--------------------------------------------------------------------------------
 I'll only warn you this once.
 
-========================================
+********************************************************************************
 
 ```
