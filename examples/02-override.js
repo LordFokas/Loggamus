@@ -1,16 +1,18 @@
 console.log("\n\n\n");
 
 
-import { Logger, LogLevel, Pipe, Output } from '../index.js';
+import { Logger, LogLevel, Pipe, Output, Transformer } from '../index.js';
 Logger.setAppRoot(3); // paths in stack traces start 2 levels above this file
 
 Logger.setDefault(new Logger('root', {
 	minlevel: LogLevel.WARN, // Logs below WARN will not log
 	mintrace: LogLevel.FATAL, // Logs below FATAL won't display stack traces
 	tracedepth: 5, // stack traces are at most 5 stack frames deep
-	output: new Pipe( // log receptacle that replicates logs it receives between its children
-		new Output.Terminal(), // log receptacle that writes pretty logs to terminal
-		new Output.File('./examples.log') // log receptacle that writes raw logs to disk
+	output: new Pipe( // any pipe (except outputs) replicates logs it receives between its children
+		new Output.Terminal(), // output that writes pretty logs to terminal
+		new Transformer.MetadataHeader( // transformer that adds metadata to the log message
+			new Output.File('./examples.log') // output that writes raw logs to disk
+		)
 	)
 }));
 
