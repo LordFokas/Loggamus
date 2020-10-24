@@ -20,7 +20,7 @@ An easy to use out-of-the-box, flexible and configurable logger for NodeJS, with
 ![Simplified Architecture Diagram](https://raw.githubusercontent.com/LordFokas/Loggamus/main/docs/architecture.png)
 
 
-## Basic usage
+## Basic usage  --  for when you want to hit the ground running.
 ( examples/00-basic.js )
 ```js
 import { Logger } from '../index.js';
@@ -43,7 +43,7 @@ Logger.fine("This level of information is so fine that it probably doesn't matte
 ![Basic Usage](https://i.imgur.com/zyT2mTg.png)
 
 
-## Pretty printing
+## Pretty Printer  --  used internally, but available to you too!
 ( examples/01-pretty.js )
 ```js
 import { PrettyPrinter } from '../index.js';
@@ -63,11 +63,11 @@ pretty
 	.color('yellow') // unfortunately it also resets all the colors :(
 	.write('is some pretty text!');
 
-	// The printer stores everything in an internal buffer
-	// and won't write anything until you flush it.
-	// When you flush it, it prints the whole buffer as a single message.
-	// Flushing also resets the printer to the initial state
-	// and returns "this" so you can keep going with the same instance.
+// The printer stores everything in an internal buffer
+// and won't write anything until you flush it.
+// When you flush it, it prints the whole buffer as a single message.
+// Flushing also resets the printer to the initial state
+// and returns "this" so you can keep going with the same instance.
 pretty.flush();
 
 // All the colors. Dim and Bright variations. Default style is Dim.
@@ -98,7 +98,7 @@ pretty.style('hidden').write('Hidden is also weird, at least in my terminal. But
 ![Pretty Printing](https://i.imgur.com/YwPvdnE.png)
 
 
-## Overriding defaults
+## Overriding defaults  --  Don't like my style or configs? Define yours!
 ( examples/02-override.js)
 ```js
 import { Logger, LogLevel, Pipe, Output } from '../index.js';
@@ -137,6 +137,8 @@ child.debug("Debugging: The fun mystery game where you are\nthe detective, the v
 child.fine("This level of information is so fine that it probably doesn't matter.");
 ```
 ![Overriding defaults](https://i.imgur.com/b9iyodz.png)
+
+Output to `example.log` :
 ```
 ========================================
 {
