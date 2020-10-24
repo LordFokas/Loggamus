@@ -23,9 +23,13 @@ An easy to use out-of-the-box, flexible and configurable logger for NodeJS, with
 ## Basic usage
 ( examples/00-basic.js )
 ```js
-import { Logger } from 'loggamus';
+import { Logger } from '../index.js';
 
-Logger.fatal("This is a fatal error!");
+Logger.setAppRoot(3);
+
+(function (){
+	Logger.fatal("This is a fatal error!");
+})();
 
 (function named_function(){
 	Logger.error("This is a recoverable error...");
@@ -33,7 +37,7 @@ Logger.fatal("This is a fatal error!");
 
 Logger.warn("I'll only warn you this once.");
 Logger.info("Information is the currency of modern times...");
-Logger.debug("Debugging: The fun mystery game where you are the detective, the victim, and the murderer!");
+Logger.debug("Debugging: The fun mystery game where you are\nthe detective, the victim, and the murderer!!");
 Logger.fine("This level of information is so fine that it probably doesn't matter.");
 ```
 ![Basic Usage](https://i.imgur.com/zyT2mTg.png)
