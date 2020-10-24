@@ -104,5 +104,4 @@ dist
 .tern-port
 
 # Sublime Text
-*.sublime-project
-*.sublime-workspace
+*.sublime-*
