@@ -1,7 +1,6 @@
 /examples
+/docs
 
 *.log
-
-# Sublime Text
 *.sublime-project
 *.sublime-workspace
