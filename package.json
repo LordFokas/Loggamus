@@ -27,7 +27,5 @@
     "url": "https://github.com/LordFokas/Loggamus/issues"
   },
   "homepage": "https://github.com/LordFokas/Loggamus#readme",
-  "dependencies": {
-    "caller-id": "^0.1.0"
-  }
+  "dependencies": {}
 }
