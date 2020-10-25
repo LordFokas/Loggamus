@@ -23,7 +23,7 @@ An easy to use out-of-the-box, flexible and configurable logger for NodeJS, with
 ## Basic usage  --  for when you want to hit the ground running.
 ( examples/00-basic.js )
 ```js
-import { Logger } from '../index.js';
+import { Logger } from 'loggamus';
 
 Logger.setAppRoot(3);
 
@@ -46,7 +46,7 @@ Logger.fine("This level of information is so fine that it probably doesn't matte
 ## Pretty Printer  --  used internally, but available to you too!
 ( examples/01-pretty.js )
 ```js
-import { PrettyPrinter } from '../index.js';
+import { PrettyPrinter } from 'loggamus';
 
 const pretty = new PrettyPrinter();
 
@@ -101,7 +101,8 @@ pretty.style('hidden').write('Hidden is also weird, at least in my terminal. But
 ## Overriding defaults  --  Don't like my style or configs? Define yours!
 ( examples/02-override.js)
 ```js
-import { Logger, LogLevel, Pipe, Output, Transformer } from '../index.js';
+import { Logger, LogLevel, Pipe, Output, Transformer } from 'loggamus';
+
 Logger.setAppRoot(3); // paths in stack traces start 2 levels above this file
 
 Logger.setDefault(new Logger('root', {
