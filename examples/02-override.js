@@ -11,7 +11,7 @@ Logger.setDefault(new Logger('root', {
 	output: new Pipe( // any pipe (except outputs) replicates logs it receives between its children
 		new Output.Terminal(), // output that writes pretty logs to terminal
 		new Transformer.MetadataHeader( // transformer that adds metadata to the log message
-			new Output.File('./examples.log') // output that writes raw logs to disk
+			new Output.File('./example.log') // output that writes raw logs to disk
 		)
 	)
 }));

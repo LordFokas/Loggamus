@@ -1,0 +1,64 @@
+{
+	"default": "root",
+
+	"loggers": {
+		"root": {
+			"options": {
+				"output": {
+					"type": "pipe",
+					"name": "pipe0"
+				},
+				"minlevel": "loggamus:DEBUG",
+				"mintrace": "loggamus:ERROR",
+				"tracedepth": 8
+			},
+			"children": {
+				"child-01": {
+					"options": {
+						"minlevel": "loggamus:WARNING",
+						"mintrace": "loggamus:$MAX"
+					}
+				}
+			}
+		}
+	},
+
+	"pipes": {
+		"pipe0": {
+			"class": "loggamus:Pipe",
+			"options": { },
+			"downstreams": [
+				{
+					"type": "output",
+					"name": "terminal"
+				}, {
+					"type": "pipe",
+					"class": "loggamus:Transformer.MetadataHeader",
+					"options": { },
+					"downstreams": [
+						{
+							"type": "output",
+							"name": "example.log"
+						}
+					]
+				}
+			]
+		}
+	},
+
+	"outputs": {
+		"terminal": {
+			"class": "loggamus:Output.Terminal",
+			"options": {
+				"stream": "loggamus:stdout",
+				"color": true
+			}
+		},
+		"example.log": {
+			"class": "loggamus:Output.File",
+			"options": {
+				"path": "./examples/example.log"
+			}
+		}
+	}
+}
