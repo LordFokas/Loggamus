@@ -17,7 +17,7 @@ An easy to use out-of-the-box, flexible and configurable logger for NodeJS, with
 
 
 ## Simplified Architecture Diagram
-![Simplified Architecture Diagram](https://raw.githubusercontent.com/LordFokas/Loggamus/main/docs/arch-overview.png)
+![Simplified Architecture Diagram](https://raw.githubusercontent.com/LordFokas/Loggamus/tree/development/docs/arch-overview.png)
 
 
 ## Basic usage  --  for when you want to hit the ground running.
