@@ -21,25 +21,14 @@ An easy to use out-of-the-box, flexible and configurable logger for NodeJS, with
 - [x] Define the minimum level to log messages (default is everything)
 - [x] Define the minimum level at which messages also print the caller stack frame (default is error)
 - [x] Style of printed messages is fully configurable per LogLevel
-- [x] Ability to create your own scale of LogLevels (more on that later)
+- [x] Ability to create your own LogLevels
 
 **Output Pipeline**
 - [x] Define where and how logged messages are sent
 - [x] File and Terminal output pipes out of the box
 - [x] Any pipe will replicate messages among all children outputs
-- [x] Map pipe will transform messages that go through it
+- [x] Mapper pipe will transform messages that go through it
 - [x] Filter pipe will drop messages that fail to meet given criteria
-
-**Pipeline Factory**
-- [x] Define your pipeline as a JSON file / object tree in memory
-- [x] Factory will build the entire pipeline for you
-- [x] Registry holds dependencies for and results of Factory operations
-- [x] A pipeline assembly operation can be configured to replace the default logger at the end
-- [x] Can be used to dynamically replace an entire pipeline in runtime
-
-**Extensible**
-- [x] Create your own custom pipes, outputs, logging levels, and so on
-- [x] Registry enables you to refer in JSON to components provided by other packages
 
 
 ## Simplified Architecture Diagram
