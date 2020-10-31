@@ -1,19 +1,34 @@
 # Loggamus
-An easy to use out-of-the-box, flexible and configurable logger for NodeJS, with **no external dependencies!**
+An easy to use out-of-the-box, flexible and configurable logger for NodeJS, with **no required external dependencies!**
 
 
 ## Features
-- [x] Logging Levels
+
+**Easy to use**
+- [x] Default (no configs given) Logger instance prints any LogLevel to the terminal (and in color)
+- [x] Static Logger methods re-route to a global Logger (called "default", which starts off as a default Logger instance)
+
+**Configurable**
+- [x] Child Loggers inherit parent configuration by default
+- [x] Everything in a Logger can be reconfigured
+
+**Pretty Printer**
+- [x] Provides colorful terminal output
+- [x] You can also create your own instance to write colorful messages to the terminal yourself
+- [x] A default instance will output straight to stdout
+
+**Logging Levels**
 - [x] Define the minimum level to log messages (default is everything)
 - [x] Define the minimum level at which messages also print the caller stack frame (default is error)
-- [x] Pretty printer for colorful terminal output
-- [x] You can instantiate your own pretty printer to write colorful messages straight to the terminal
-- [x] Style of each logging level is fully configurable
-- [x] Child loggers
-- [x] Static methods shortcut to default logger, which by default prints in color to the terminal
-- [x] Output pipelining system defines where and how logged messages are sent
+- [x] Style of printed messages is fully configurable per LogLevel
+- [x] Ability to create your own LogLevels
+
+**Output Pipeline**
+- [x] Define where and how logged messages are sent
 - [x] File and Terminal output pipes out of the box
-- [x] Splitter pipe will replicate messages among all children pipes
+- [x] Any pipe will replicate messages among all children outputs
+- [x] Mapper pipe will transform messages that go through it
+- [ ] Filter pipe will drop messages that fail to meet given criteria
 
 
 ## Simplified Architecture Diagram
