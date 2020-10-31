@@ -32,7 +32,7 @@ An easy to use out-of-the-box, flexible and configurable logger for NodeJS, with
 
 
 ## Simplified Architecture Diagram
-![Simplified Architecture Diagram](https://raw.githubusercontent.com/LordFokas/Loggamus/main/docs/architecture.png)
+![Simplified Architecture Diagram](https://raw.githubusercontent.com/LordFokas/Loggamus/master/docs/architecture.png)
 
 
 ## Basic usage  --  for when you want to hit the ground running.
