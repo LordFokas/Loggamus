@@ -28,7 +28,7 @@ An easy to use out-of-the-box, flexible and configurable logger for NodeJS, with
 - [x] File and Terminal output pipes out of the box
 - [x] Any pipe will replicate messages among all children outputs
 - [x] Mapper pipe will transform messages that go through it
-- [ ] Filter pipe will drop messages that fail to meet given criteria
+- [x] Filter pipe will drop messages that fail to meet given criteria
 
 
 ## Simplified Architecture Diagram
