@@ -1,6 +1,6 @@
 {
   "name": "loggamus",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "type": "module",
   "description": "An easy to use out-of-the-box, flexible and configurable logger for NodeJS, with no required external dependencies!",
   "main": "index.js",
