@@ -1,11 +1,11 @@
 import { Output } from './Output.js';
 
 export class Pipe extends Output{
-	#downstreams = [];
+	readonly #downstreams:Output[];
 
-	constructor(...downstreams){
+	constructor(...downstreams:Output[]){
 		super(false, false);
-		this.#downstreams = downstreams;
+		this.#downstreams = downstreams || [];
 		let pretty = false;
 		let raw    = false;
 		for(const downstream of downstreams){
@@ -15,7 +15,7 @@ export class Pipe extends Output{
 		this.$setStreams(pretty, raw);
 	}
 
-	write(pretty, raw, meta){
+	write(pretty:string, raw:string|object, meta:object){
 		for(const downstream of this.#downstreams){
 			downstream.write(pretty, raw, meta);
 		}

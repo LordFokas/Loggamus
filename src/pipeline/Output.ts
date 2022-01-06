@@ -1,49 +1,53 @@
-import util from 'node:util';
-import fs from 'node:fs';
+import * as util from 'node:util';
+import * as fs from 'node:fs';
+
+export interface Stream {
+	write: (...data:any[]) => void;
+}
 
 export class Output {
 	#usesPretty = false;
 	#usesRaw    = false;
 
-	constructor(pretty, raw){
+	constructor(pretty:boolean, raw:boolean){
 		this.$setStreams(pretty, raw);
 	}
 
-	write(pretty, raw, meta){
+	write(pretty:string, raw:string|object, meta:object) : void {
 		throw new Error('Not Implemented');
 	}
 
-	usesPretty(){ return this.#usesPretty; }
-	usesRaw   (){ return this.#usesRaw; }
+	usesPretty() : boolean { return this.#usesPretty; }
+	usesRaw   () : boolean { return this.#usesRaw; }
 
-	$setStreams(pretty, raw){
+	$setStreams(pretty:boolean, raw:boolean) : void {
 		this.#usesPretty = !!pretty;
 		this.#usesRaw    = !!raw;
 	}
 
 	static Terminal = class Terminal extends Output {
-		#stream = null;
+		#stream:Stream;
 
-		constructor(stream = process.stdout, colors=true){
+		constructor(stream:Stream = process.stdout, colors:boolean = true){
 			super(colors, !colors);
 			this.#stream = stream;
 		}
 
-		write(pretty, raw, meta){
+		write(pretty:string, raw:string|object, meta:object) : void {
 			this.#stream.write(pretty);
 		}
 	};
 
 	static File = class File extends Output {
-		#path = null;
+		#path:string;
 
-		constructor(path){
+		constructor(path:string){
 			super(false, true);
 			if(!path) throw new Error('An output file path is mandatory!');
 			this.#path = path;
 		}
 
-		write(pretty, raw, meta){
+		write(pretty:string, raw:string|object, meta:object){
 			if(typeof raw !== 'string'){
 				raw = util.inspect(raw);
 			}

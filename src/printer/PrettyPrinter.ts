@@ -1,4 +1,4 @@
-import { DualBuffer, PrettyBuffer, RawBuffer } from './PrintBuffers.js';
+import { DualBuffer, PrettyBuffer, RawBuffer, type PrintBuffer } from './PrintBuffers.js';
 import { Output } from '../pipeline/Output.js';
 
 //    BACKGROUND COLORS              FOREGROUND COLORS              MODIFIERS
@@ -11,18 +11,21 @@ const BgMagenta = "\x1b[45m";  const FgMagenta = "\x1b[35m";  const Reverse    =
 const BgCyan    = "\x1b[46m";  const FgCyan    = "\x1b[36m";  const Hidden     = "\x1b[8m";
 const BgWhite   = "\x1b[47m";  const FgWhite   = "\x1b[37m";
 
+export type Color = "black"|"red"|"green"|"yellow"|"blue"|"magenta"|"cyan"|"white";
+export type Modifier = "dim"|"bright"|"underline"|"underscore"|"reset"|"blink"|"reverse"|"hidden";
+
 export class PrettyPrinter {
-	static #terminal = new Output.Terminal();
+	static #terminal:Output = new Output.Terminal();
 
 	// Symbol groups
 	static #bcolor = { black: BgBlack, red: BgRed, green: BgGreen, yellow: BgYellow, blue: BgBlue, magenta: BgMagenta, cyan: BgCyan, white: BgWhite };
 	static #fcolor = { black: FgBlack, red: FgRed, green: FgGreen, yellow: FgYellow, blue: FgBlue, magenta: FgMagenta, cyan: FgCyan, white: FgWhite };
 	static #styles = { dim: Dim, bright: Bright, underline: Underline, underscore: Underline, reset: Reset, blink: Blink, reverse: Reverse, hidden: Hidden };
 
-	#output = null;
-	#buffer = null;
+	#output:Output;
+	#buffer:PrintBuffer;
 
-	constructor(output){
+	constructor(output:Output){
 		this.#output = output || PrettyPrinter.#terminal;
 		let pretty = this.#output.usesPretty();
 		let raw = this.#output.usesRaw();
@@ -33,22 +36,22 @@ export class PrettyPrinter {
 		}else if(raw){
 			this.#buffer = new RawBuffer();
 		}else{
-			throw new Error('At least one buffer type is necessary!');
+			throw new Error('At least one print buffer type is necessary!');
 		}
 	}
 
-	write(...strings){
+	write(...strings:any[]) : PrettyPrinter {
 		for(const string of strings){
 			this.#buffer.text(string);
 		}
 		return this;
 	}
 
-	endl(num = 1){
+	endl(num = 1) : PrettyPrinter {
 		return this.write('\n'.repeat(num));
 	}
 
-	#inject(array, ...keys){
+	#inject(array:object, ...keys:Color[]|Modifier[]) : PrettyPrinter {
 		for(const key of keys){
 			const symbol = array[key];
 			if(!symbol) throw new Error('No such symbol! ('+key+')');
@@ -57,23 +60,23 @@ export class PrettyPrinter {
 		return this;
 	}
 
-	color(color){
+	color(color:Color) : PrettyPrinter {
 		return this.#inject(PrettyPrinter.#fcolor, color);
 	}
 
-	background(color){
+	background(color:Color) : PrettyPrinter {
 		return this.#inject(PrettyPrinter.#bcolor, color);
 	}
 
-	style(...symbols){
+	style(...symbols:Modifier[]) : PrettyPrinter {
 		return this.#inject(PrettyPrinter.#styles, ...symbols);
 	}
 
-	reset(){
+	reset() : PrettyPrinter {
 		return this.style('reset');
 	}
 
-	flush(num, meta){
+	flush(num:number, meta:object) : PrettyPrinter {
 		this.reset();
 		if(num !== 0) this.endl(num);
 		this.#output.write(this.#buffer.pretty(), this.#buffer.raw(), meta);

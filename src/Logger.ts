@@ -1,34 +1,49 @@
-import { PrettyPrinter } from './printer/PrettyPrinter.js';
+import { Color, Modifier, PrettyPrinter } from './printer/PrettyPrinter.js';
 import { Output } from './pipeline/Output.js';
+
+export type Style = {
+	color:Color;
+	mods:Modifier[];
+}
+
+export type StyleMap = { [key:string] : Style }
+
+export type Options = {
+	output: Output;
+	minlevel: LogLevel;
+	mintrace: LogLevel;
+	tracedepth: number;
+	styles: StyleMap;
+}
 
 export class LogLevel {
 	// default Loggamus log levels. New ones can be defined.
-	static FINE  = new LogLevel('FINE' ,  0);
-	static DEBUG = new LogLevel('DEBUG', 10);
-	static INFO  = new LogLevel('INFO' , 20);
-	static WARN  = new LogLevel('WARN' , 30);
-	static ERROR = new LogLevel('ERROR', 40);
-	static FATAL = new LogLevel('FATAL', 50);
+	static readonly FINE  = new LogLevel('FINE' ,  0);
+	static readonly DEBUG = new LogLevel('DEBUG', 10);
+	static readonly INFO  = new LogLevel('INFO' , 20);
+	static readonly WARN  = new LogLevel('WARN' , 30);
+	static readonly ERROR = new LogLevel('ERROR', 40);
+	static readonly FATAL = new LogLevel('FATAL', 50);
 
 	// special levels to represent limits
-	static $MIN  = new LogLevel('$MIN', -9999);
-	static $MAX  = new LogLevel('$MAX',  9999);
+	static readonly $MIN  = new LogLevel('$MIN', -9999);
+	static readonly $MAX  = new LogLevel('$MAX',  9999);
 
-	// ******************************************
-	#ns; #name; #level;
-	namespace(){ return this.#ns; }
-	name(){ return this.#name; }
-	level(){ return this.#level; }
-	// ******************************************
-	eq(ll){ return this.#level == ll.#level; }
-	ne(ll){ return this.#level != ll.#level; }
-	gt(ll){ return this.#level >  ll.#level; }
-	ge(ll){ return this.#level >= ll.#level; }
-	lt(ll){ return this.#level <  ll.#level; }
-	le(ll){ return this.#level <= ll.#level; }
-	// ******************************************
+	// ***********************************************************
+	#ns:string; #name:string; #level:number;
+	namespace() : string { return this.#ns; }
+	name() : string { return this.#name; }
+	level() : number { return this.#level; }
+	// ***********************************************************
+	eq(ll:LogLevel) : boolean { return this.#level == ll.#level; }
+	ne(ll:LogLevel) : boolean { return this.#level != ll.#level; }
+	gt(ll:LogLevel) : boolean { return this.#level >  ll.#level; }
+	ge(ll:LogLevel) : boolean { return this.#level >= ll.#level; }
+	lt(ll:LogLevel) : boolean { return this.#level <  ll.#level; }
+	le(ll:LogLevel) : boolean { return this.#level <= ll.#level; }
+	// ***********************************************************
 
-	constructor(name, level){
+	constructor(name:string, level:number){
 		this.#name = name;
 		this.#level = level;
 	}
@@ -36,21 +51,21 @@ export class LogLevel {
 
 export class Logger {
 	static Level = LogLevel;
-	static #terminal = new Output.Terminal();
-	static #default = new Logger('default');
-	static #appRoot = null;
+	static #terminal:Output = new Output.Terminal();
+	static #default:Logger = new Logger('default');
+	static #appRoot:RegExp;
 
-	static getDefault(){
+	static getDefault() : Logger {
 		return Logger.#default;
 	}
 
-	static setDefault(logger){
+	static setDefault(logger:Logger) : void {
 		Logger.#default = logger;
 	}
 
 	// Sets the app root (initial portion of the path to be trimmed in trace sources)
 	// parent: how many levels above the caller is the root. Default = 1.
-	static setAppRoot(parent=1){
+	static setAppRoot(parent:number=1) : void {
 		const prt = new RegExp('^(?:\\w+://)');
 		const exp = new RegExp('(?:[/\\\\][^/\\\\]+){'+parent+'}$');
 		const path = Logger.#getStackTrace(1)[0].getFileName().replace(prt, '').replace(exp, '')+'/';
@@ -58,38 +73,43 @@ export class Logger {
 	}
 
 	// Shortcut logging methods. Metadata is optional and not printed by default, but other outputs (file, ELK, etc) might care.
-	static fatal (message, meta){ Logger.#default.#_log(message, LogLevel.FATAL, meta); }
-	static error (message, meta){ Logger.#default.#_log(message, LogLevel.ERROR, meta); }
-	static warn  (message, meta){ Logger.#default.#_log(message, LogLevel.WARN,  meta); }
-	static info  (message, meta){ Logger.#default.#_log(message, LogLevel.INFO,  meta); }
-	static debug (message, meta){ Logger.#default.#_log(message, LogLevel.DEBUG, meta); }
-	static fine  (message, meta){ Logger.#default.#_log(message, LogLevel.FINE,  meta); }
+	static fatal (message:string|object, meta:object) : void { Logger.#default.#_log(message, LogLevel.FATAL, meta); }
+	static error (message:string|object, meta:object) : void { Logger.#default.#_log(message, LogLevel.ERROR, meta); }
+	static warn  (message:string|object, meta:object) : void { Logger.#default.#_log(message, LogLevel.WARN,  meta); }
+	static info  (message:string|object, meta:object) : void { Logger.#default.#_log(message, LogLevel.INFO,  meta); }
+	static debug (message:string|object, meta:object) : void { Logger.#default.#_log(message, LogLevel.DEBUG, meta); }
+	static fine  (message:string|object, meta:object) : void { Logger.#default.#_log(message, LogLevel.FINE,  meta); }
 
-	static log(message, level=LogLevel.FINE, meta){
+	static log(message:string|object, level:LogLevel = LogLevel.FINE, meta:object) : void {
 		Logger.#default.#_log(message, level, meta);
 	}
 
-	static #getStackTrace(param){
+	static #getStackTrace(param:Error|number) : NodeJS.CallSite[] {
 		const exception = (param instanceof Error) ? param : null; 
 		const prepare = Error.prepareStackTrace;
 		Error.prepareStackTrace = ($, stack) => stack;
 		const error = exception || new Error();
 		if(!exception) Error.captureStackTrace(error);
-		const stack = error.stack;
+
+		// @ts-ignore: error.stack is a CallSite[], but some definitions seem to think it's a string instead.
+		const stack:NodeJS.CallSite[] = error.stack;
+
 		Error.prepareStackTrace = prepare;
 		if(exception) return stack;
+
+		// @ts-ignore: if param is not a number this line is unreachable.
 		return stack.slice(param+1);
 	}
 
 	// ########################################################################
-	#name = null;
-	#printer = null;
-	#output = null;
-	#tracenext = null;
-	#minlevel = null;
-	#mintrace = null;
-	#tracedepth = null;
-	#styles = {
+	#name:string = null;
+	#printer:PrettyPrinter = null;
+	#output:Output = null;
+	#tracenext:boolean = null;
+	#minlevel:LogLevel = null;
+	#mintrace:LogLevel = null;
+	#tracedepth:number = null;
+	#styles:StyleMap = {
 		'FINE'  : { color: 'white' , mods: ['dim']        },
 		'DEBUG' : { color: 'blue'  , mods: ['bright']     },
 		'INFO'  : { color: 'green' , mods: [ ]            },
@@ -106,7 +126,7 @@ export class Logger {
 		'$LINE'     : { color: 'cyan'  , mods: ['bright'] }
 	};
 
-	constructor(name, options = {}){
+	constructor(name:string, options:Partial<Options> = {}){
 		if(!name) throw new Error('Logger must be named!');
 		this.#name = name;
 		this.setOutput(options.output);
@@ -116,11 +136,11 @@ export class Logger {
 		this.applyStyles(options.styles);
 	}
 
-	name(){
+	name() : string {
 		return this.#name;
 	}
 
-	child(name, options = {}){
+	child(name, options:Partial<Options> = {}) : Logger {
 		if(!name) throw new Error('Child logger must be named!');
 		return new Logger(this.#name+'/'+name, {
 			output: options.output || this.#output,
@@ -131,13 +151,14 @@ export class Logger {
 		});
 	}
 
-	setOutput(output){
+	setOutput(output:Output) : Logger {
 		this.#output = output || Logger.#terminal;
 		this.#printer = new PrettyPrinter(this.#output);
 		return this;
 	}
 
-	applyStyles(styles = {}){ // clone styles deep enough to prevent mutation.
+	// clone styles deep enough to prevent mutation.
+	applyStyles(styles:StyleMap = {}) : Logger {
 		for(const level of Object.keys(styles)){
 			this.#styles[level] = {
 				color: styles[level].color || this.#styles[level].color,
@@ -147,35 +168,35 @@ export class Logger {
 		return this;
 	}
 
-	setMinLevel(level = LogLevel.FINE){
+	setMinLevel(level:LogLevel = LogLevel.FINE) : Logger {
 		this.#minlevel = level;
 		return this;
 	}
 
-	setMinTrace(trace = LogLevel.ERROR){
+	setMinTrace(trace:LogLevel = LogLevel.ERROR) : Logger {
 		this.#mintrace = trace;
 		return this;
 	}
 
-	setTraceDepth(depth = 1){
+	setTraceDepth(depth:number = 1) : Logger {
 		this.#tracedepth = depth;
 		return this;
 	}
 
 	// Shortcut logging methods. Metadata is optional and not printed by default, but other outputs (file, ELK, etc) might care.
-	fatal (message, meta){ this.#_log(message, LogLevel.FATAL, meta); }
-	error (message, meta){ this.#_log(message, LogLevel.ERROR, meta); }
-	warn  (message, meta){ this.#_log(message, LogLevel.WARN,  meta); }
-	info  (message, meta){ this.#_log(message, LogLevel.INFO,  meta); }
-	debug (message, meta){ this.#_log(message, LogLevel.DEBUG, meta); }
-	fine  (message, meta){ this.#_log(message, LogLevel.FINE,  meta); }
+	fatal (message:string|object, meta:object) : void { this.#_log(message, LogLevel.FATAL, meta); }
+	error (message:string|object, meta:object) : void { this.#_log(message, LogLevel.ERROR, meta); }
+	warn  (message:string|object, meta:object) : void { this.#_log(message, LogLevel.WARN,  meta); }
+	info  (message:string|object, meta:object) : void { this.#_log(message, LogLevel.INFO,  meta); }
+	debug (message:string|object, meta:object) : void { this.#_log(message, LogLevel.DEBUG, meta); }
+	fine  (message:string|object, meta:object) : void { this.#_log(message, LogLevel.FINE,  meta); }
 
-	log(message, level=LogLevel.FINE, meta){
+	log(message:string|object, level:LogLevel = LogLevel.FINE, meta:object) : void {
 		this.#_log(message, level, meta);
 	}
 
 	// Logs a message, with a level.
-	#_log(message, level, meta){
+	#_log(message:string|object, level:LogLevel, meta:object) : void {
 		// Ignore messages below minimum log level;
 		if(level.lt(this.#minlevel)) return;
 
@@ -193,25 +214,25 @@ export class Logger {
 		if(doTrace) this.#printer.endl();
 
 		// Write message
-		const style = this.#styles[level.name()];
+		const style:Style = this.#styles[level.name()];
 		this.#printer.color(style.color).style(...(style.mods));
 		this.#printer.write(message);
 		
 		// print information about the stack frame that called us.
-		let stack;
+		let stack:NodeJS.CallSite[];
 		if(doTrace){
 			stack = Logger.#getStackTrace(2);
 			const depth = isError ? 1 : this.#tracedepth;
 			this.#printer.endl();
-			for(var i=0; i<depth && i<stack.length; i++)
+			for(let i=0; i<depth && i<stack.length; i++)
 				this.#addStackFrameInfo(stack[i], this.#printer, i==0, 'Logged', 'cyan');
 		}
 
 		// print information about the error stack trace
-		let error;
+		let error:NodeJS.CallSite[];
 		if(isError){
 			error = Logger.#getStackTrace(message);
-			for(var i=0; i<error.length; i++)
+			for(let i=0; i<error.length; i++)
 				this.#addStackFrameInfo(error[i], this.#printer, i==0, 'Thrown', 'magenta');
 		}
 
@@ -221,20 +242,24 @@ export class Logger {
 			timestamp: new Date().toISOString(),
 			log_level_id: level.level(),
 			log_level: level.name(),
-		};
-		if(doTrace) metadata.logged_at = {
-			caller: Logger.#getFrameCaller(stack[0]),
-			source: Logger.#getFrameSource(stack[0])
+			error_at: undefined,
+			logged_at: undefined,
+			metadata: undefined
 		};
 		if(error) metadata.error_at = {
 			caller: Logger.#getFrameCaller(error[0]),
 			source: Logger.#getFrameSource(error[0])
 		};
+		if(doTrace) metadata.logged_at = {
+			caller: Logger.#getFrameCaller(stack[0]),
+			source: Logger.#getFrameSource(stack[0])
+		};
+		
 		if(meta !== undefined) metadata.metadata = meta; // I'm So Meta Even This Acronym :)
 		this.#printer.flush(1, metadata);
 	}
 
-	#addStackFrameInfo(frame, print, first, verb, vc){
+	#addStackFrameInfo(frame:NodeJS.CallSite, print:PrettyPrinter, first:boolean, verb:string, vc:Color) : void {
 		const c = this.#styles['$CALLSITE'];
 		const l = this.#styles['$LAMBDA'];
 		const f = this.#styles['$FUNCTION'];
@@ -254,7 +279,7 @@ export class Logger {
 		print.write(Logger.#getFrameCaller(frame)).reset();
 
 		// Source
-		let source = Logger.#getFrameSource(frame);
+		let source:string|string[] = Logger.#getFrameSource(frame);
 		if(source === null){
 			print.color(c.color).style(...(c.mods)).write(' in <unknown>').endl();
 		}else{
@@ -265,12 +290,12 @@ export class Logger {
 		}
 	}
 
-	forceStackTrace(trace){
+	forceStackTrace(trace:boolean) : Logger{
 		this.#tracenext = !!trace; // coerce trace to boolean.
 		return this;
 	}
 
-	static #getFrameCaller(frame){
+	static #getFrameCaller(frame:NodeJS.CallSite) : string {
 		let caller = frame.getFunctionName();
 		if(!caller) return '[[Lambda Function]]';
 		let type = frame.getTypeName();
@@ -286,11 +311,11 @@ export class Logger {
 		return caller;
 	}
 
-	static #isStaticFrame(frame){
+	static #isStaticFrame(frame:NodeJS.CallSite) : boolean {
 		return frame.getTypeName() === 'Function';
 	}
 
-	static #getFrameSource(frame){
+	static #getFrameSource(frame:NodeJS.CallSite) : string {
 		let line = frame.getLineNumber();
 		let path = frame.getFileName();
 		if(!path && !line){ return null; }

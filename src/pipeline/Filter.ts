@@ -1,15 +1,16 @@
-import { Predicates } from './Predicates.js';
+import { Predicates, type Predicate } from './Predicates.js';
 import { Pipe } from './Pipe.js';
+import { Output } from './Output.js';
 
 export class Filter extends Pipe {
-	#predicate;
+	readonly #predicate:Predicate;
 
-	constructor(predicate, ...downstreams){
+	constructor(predicate:Predicate, ...downstreams:Output[]){
 		super(...downstreams);
 		this.#predicate = predicate;
 	}
 
-	write(pretty, raw, meta){
+	write(pretty:string, raw:string|object, meta:object){
 		if(this.#predicate(pretty, raw, meta)){
 			super.write(pretty, raw, meta);
 		}

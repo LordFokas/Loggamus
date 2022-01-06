@@ -1,5 +1,5 @@
 # Loggamus
-An easy to use out-of-the-box, flexible and configurable logger for NodeJS, with **no required external dependencies!**
+An easy to use out-of-the-box, flexible and configurable logger for NodeJS, with **no required external dependencies!** Now featuring TypeScript support.
 
 
 ## Features
