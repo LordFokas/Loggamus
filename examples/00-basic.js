@@ -1,7 +1,7 @@
 console.log("\n\n\n");
 
 
-import { Logger } from '../index.js';
+import { Logger } from '../dist/index.js';
 
 
 Logger.setAppRoot(3);

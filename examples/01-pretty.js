@@ -1,7 +1,7 @@
 console.log("\n\n\n");
 
 
-import { PrettyPrinter } from '../index.js';
+import { PrettyPrinter } from '../dist/index.js';
 
 const pretty = new PrettyPrinter();
 

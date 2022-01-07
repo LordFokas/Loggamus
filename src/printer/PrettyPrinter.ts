@@ -25,8 +25,8 @@ export class PrettyPrinter {
 	#output:Output;
 	#buffer:PrintBuffer;
 
-	constructor(output:Output){
-		this.#output = output || PrettyPrinter.#terminal;
+	constructor(output:Output = PrettyPrinter.#terminal){
+		this.#output = output;
 		let pretty = this.#output.usesPretty();
 		let raw = this.#output.usesRaw();
 		if(pretty && raw){

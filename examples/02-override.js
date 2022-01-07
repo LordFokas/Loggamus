@@ -1,7 +1,7 @@
 console.log("\n\n\n");
 
 
-import { Logger, LogLevel, Pipe, Output, Mapper } from '../index.js';
+import { Logger, LogLevel, Pipe, Output, Mapper } from '../dist/index.js';
 Logger.setAppRoot(3); // paths in stack traces start 2 levels above this file
 
 Logger.setDefault(new Logger('root', {
