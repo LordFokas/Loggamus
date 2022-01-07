@@ -76,7 +76,7 @@ export class PrettyPrinter {
 		return this.style('reset');
 	}
 
-	flush(num:number, meta:object) : PrettyPrinter {
+	flush(num:number = 1, meta:object = {}) : PrettyPrinter {
 		this.reset();
 		if(num !== 0) this.endl(num);
 		this.#output.write(this.#buffer.pretty(), this.#buffer.raw(), meta);
