@@ -73,19 +73,19 @@ export class Logger {
 	}
 
 	// Shortcut logging methods. Metadata is optional and not printed by default, but other outputs (file, ELK, etc) might care.
-	static fatal (message:string|object, meta:object) : void { Logger.#default.#_log(message, LogLevel.FATAL, meta); }
-	static error (message:string|object, meta:object) : void { Logger.#default.#_log(message, LogLevel.ERROR, meta); }
-	static warn  (message:string|object, meta:object) : void { Logger.#default.#_log(message, LogLevel.WARN,  meta); }
-	static info  (message:string|object, meta:object) : void { Logger.#default.#_log(message, LogLevel.INFO,  meta); }
-	static debug (message:string|object, meta:object) : void { Logger.#default.#_log(message, LogLevel.DEBUG, meta); }
-	static fine  (message:string|object, meta:object) : void { Logger.#default.#_log(message, LogLevel.FINE,  meta); }
+	static fatal (message:string|object, meta?:object) : void { Logger.#default.#_log(message, LogLevel.FATAL, meta); }
+	static error (message:string|object, meta?:object) : void { Logger.#default.#_log(message, LogLevel.ERROR, meta); }
+	static warn  (message:string|object, meta?:object) : void { Logger.#default.#_log(message, LogLevel.WARN,  meta); }
+	static info  (message:string|object, meta?:object) : void { Logger.#default.#_log(message, LogLevel.INFO,  meta); }
+	static debug (message:string|object, meta?:object) : void { Logger.#default.#_log(message, LogLevel.DEBUG, meta); }
+	static fine  (message:string|object, meta?:object) : void { Logger.#default.#_log(message, LogLevel.FINE,  meta); }
 
-	static log(message:string|object, level:LogLevel = LogLevel.FINE, meta:object) : void {
+	static log(message:string|object, level:LogLevel = LogLevel.FINE, meta?:object) : void {
 		Logger.#default.#_log(message, level, meta);
 	}
 
 	static #getStackTrace(param:Error|number) : NodeJS.CallSite[] {
-		const exception = (param instanceof Error) ? param : null; 
+		const exception = (param instanceof Error) ? param : null;
 		const prepare = Error.prepareStackTrace;
 		Error.prepareStackTrace = ($, stack) => stack;
 		const error = exception || new Error();
@@ -184,14 +184,14 @@ export class Logger {
 	}
 
 	// Shortcut logging methods. Metadata is optional and not printed by default, but other outputs (file, ELK, etc) might care.
-	fatal (message:string|object, meta:object) : void { this.#_log(message, LogLevel.FATAL, meta); }
-	error (message:string|object, meta:object) : void { this.#_log(message, LogLevel.ERROR, meta); }
-	warn  (message:string|object, meta:object) : void { this.#_log(message, LogLevel.WARN,  meta); }
-	info  (message:string|object, meta:object) : void { this.#_log(message, LogLevel.INFO,  meta); }
-	debug (message:string|object, meta:object) : void { this.#_log(message, LogLevel.DEBUG, meta); }
-	fine  (message:string|object, meta:object) : void { this.#_log(message, LogLevel.FINE,  meta); }
+	fatal (message:string|object, meta?:object) : void { this.#_log(message, LogLevel.FATAL, meta); }
+	error (message:string|object, meta?:object) : void { this.#_log(message, LogLevel.ERROR, meta); }
+	warn  (message:string|object, meta?:object) : void { this.#_log(message, LogLevel.WARN,  meta); }
+	info  (message:string|object, meta?:object) : void { this.#_log(message, LogLevel.INFO,  meta); }
+	debug (message:string|object, meta?:object) : void { this.#_log(message, LogLevel.DEBUG, meta); }
+	fine  (message:string|object, meta?:object) : void { this.#_log(message, LogLevel.FINE,  meta); }
 
-	log(message:string|object, level:LogLevel = LogLevel.FINE, meta:object) : void {
+	log(message:string|object, level:LogLevel = LogLevel.FINE, meta?:object) : void {
 		this.#_log(message, level, meta);
 	}
 
