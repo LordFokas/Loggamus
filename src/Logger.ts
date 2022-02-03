@@ -269,6 +269,10 @@ export class Logger {
 		print.reset();
 		if(first) print.color(vc).write(verb).reset();
 		else print.write('      ');
+		if(typeof frame === "string"){
+			print.background("white").color("black").write(frame).reset().endl();
+			return;
+		}
 		print.color(c.color).style(...(c.mods)).write(' at ');
 
 		// Function Name
@@ -296,6 +300,7 @@ export class Logger {
 	}
 
 	static #getFrameCaller(frame:NodeJS.CallSite) : string {
+		if(typeof frame === "string") return "<unknown>";
 		let caller = frame.getFunctionName();
 		if(!caller) return '[[Lambda Function]]';
 		let type = frame.getTypeName();
@@ -312,10 +317,12 @@ export class Logger {
 	}
 
 	static #isStaticFrame(frame:NodeJS.CallSite) : boolean {
+		if(typeof frame === "string") return false;
 		return frame.getTypeName() === 'Function';
 	}
 
 	static #getFrameSource(frame:NodeJS.CallSite) : string {
+		if(typeof frame === "string") return "<unknown>";
 		let line = frame.getLineNumber();
 		let path = frame.getFileName();
 		if(!path && !line){ return null; }
