@@ -224,16 +224,26 @@ export class Logger {
 			stack = Logger.#getStackTrace(2);
 			const depth = isError ? 1 : this.#tracedepth;
 			this.#printer.endl();
-			for(let i=0; i<depth && i<stack.length; i++)
-				this.#addStackFrameInfo(stack[i], this.#printer, i==0, 'Logged', 'cyan');
+			if(typeof stack === "string"){
+				this.#printer.reset().background("white").color("black").write(stack).reset().endl();
+			}else{
+				for(let i=0; i<depth && i<stack.length; i++){
+					this.#addStackFrameInfo(stack[i], this.#printer, i==0, 'Logged', 'cyan');
+				}
+			}
 		}
 
 		// print information about the error stack trace
 		let error:NodeJS.CallSite[];
 		if(isError){
 			error = Logger.#getStackTrace(message);
-			for(let i=0; i<error.length; i++)
-				this.#addStackFrameInfo(error[i], this.#printer, i==0, 'Thrown', 'magenta');
+			if(typeof error === "string"){
+				this.#printer.reset().background("white").color("black").write(error).reset().endl();
+			}else{
+				for(let i=0; i<error.length; i++){
+					this.#addStackFrameInfo(error[i], this.#printer, i==0, 'Logged', 'cyan');
+				}
+			}
 		}
 
 		// Flush all data to output with aditional metadata
@@ -246,14 +256,32 @@ export class Logger {
 			logged_at: undefined,
 			metadata: undefined
 		};
-		if(error) metadata.error_at = {
-			caller: Logger.#getFrameCaller(error[0]),
-			source: Logger.#getFrameSource(error[0])
-		};
-		if(doTrace) metadata.logged_at = {
-			caller: Logger.#getFrameCaller(stack[0]),
-			source: Logger.#getFrameSource(stack[0])
-		};
+		if(error){
+			if(typeof error === "string"){
+				metadata.error_at = {
+					caller: "<unknown>",
+					source: "<unknown>"
+				};
+			}else{
+				metadata.error_at = {
+					caller: Logger.#getFrameCaller(error[0]),
+					source: Logger.#getFrameSource(error[0])
+				};
+			}
+		} 
+		if(doTrace){
+			if(typeof stack === "string"){
+				metadata.logged_at = {
+					caller: "<unknown>",
+					source: "<unknown>"
+				};
+			}else{
+				metadata.logged_at = {
+					caller: Logger.#getFrameCaller(stack[0]),
+					source: Logger.#getFrameSource(stack[0])
+				};
+			}
+		}
 		
 		if(meta !== undefined) metadata.metadata = meta; // I'm So Meta Even This Acronym :)
 		this.#printer.flush(1, metadata);
@@ -269,10 +297,6 @@ export class Logger {
 		print.reset();
 		if(first) print.color(vc).write(verb).reset();
 		else print.write('      ');
-		if(typeof frame === "string"){
-			print.background("white").color("black").write(frame).reset().endl();
-			return;
-		}
 		print.color(c.color).style(...(c.mods)).write(' at ');
 
 		// Function Name
@@ -300,7 +324,6 @@ export class Logger {
 	}
 
 	static #getFrameCaller(frame:NodeJS.CallSite) : string {
-		if(typeof frame === "string") return "<unknown>";
 		let caller = frame.getFunctionName();
 		if(!caller) return '[[Lambda Function]]';
 		let type = frame.getTypeName();
@@ -317,12 +340,10 @@ export class Logger {
 	}
 
 	static #isStaticFrame(frame:NodeJS.CallSite) : boolean {
-		if(typeof frame === "string") return false;
 		return frame.getTypeName() === 'Function';
 	}
 
 	static #getFrameSource(frame:NodeJS.CallSite) : string {
-		if(typeof frame === "string") return "<unknown>";
 		let line = frame.getLineNumber();
 		let path = frame.getFileName();
 		if(!path && !line){ return null; }
