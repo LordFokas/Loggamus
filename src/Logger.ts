@@ -1,5 +1,6 @@
 import { Color, Modifier, PrettyPrinter } from './printer/PrettyPrinter.js';
 import { Output } from './pipeline/Output.js';
+import { ClassMapper } from './ClassMapper.js';
 
 export type Style = {
 	color:Color;
@@ -339,8 +340,8 @@ export class Logger {
 		let access = '.';
 		if(type){
 			// check if static
-			if(type === 'Function'){
-				type = '[[Class]]';
+			if(Logger.#isStaticFrame(frame)){
+				type = ClassMapper.find(frame);
 				access = '::';
 			}
 			return type + access + caller;
