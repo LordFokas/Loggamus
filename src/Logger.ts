@@ -13,6 +13,7 @@ export type Options = {
 	minlevel: LogLevel;
 	mintrace: LogLevel;
 	tracedepth: number;
+	errordepth: number;
 	styles: StyleMap;
 }
 
@@ -109,6 +110,7 @@ export class Logger {
 	#minlevel:LogLevel = null;
 	#mintrace:LogLevel = null;
 	#tracedepth:number = null;
+	#errordepth:number = null;
 	#styles:StyleMap = {
 		'FINE'  : { color: 'white' , mods: ['dim']        },
 		'DEBUG' : { color: 'blue'  , mods: ['bright']     },
@@ -133,6 +135,7 @@ export class Logger {
 		this.setMinLevel(options.minlevel);
 		this.setMinTrace(options.mintrace);
 		this.setTraceDepth(options.tracedepth);
+		this.setErrorDepth(options.errordepth);
 		this.applyStyles(options.styles);
 	}
 
@@ -147,6 +150,7 @@ export class Logger {
 			minlevel: options.minlevel || this.#minlevel,
 			mintrace: options.mintrace || this.#mintrace,
 			tracedepth: options.tracedepth || this.#tracedepth,
+			errordepth: options.errordepth || this.#errordepth,
 			styles: options.styles || this.#styles
 		});
 	}
@@ -180,6 +184,11 @@ export class Logger {
 
 	setTraceDepth(depth:number = 1) : Logger {
 		this.#tracedepth = depth;
+		return this;
+	}
+
+	setErrorDepth(depth:number = 1) : Logger {
+		this.#errordepth = depth;
 		return this;
 	}
 
@@ -222,7 +231,7 @@ export class Logger {
 		let stack:NodeJS.CallSite[];
 		if(doTrace){
 			stack = Logger.#getStackTrace(2);
-			const depth = isError ? 1 : this.#tracedepth;
+			const depth = isError ? this.#errordepth : this.#tracedepth;
 			this.#printer.endl();
 			if(typeof stack === "string"){
 				this.#printer.reset().background("white").color("black").write(stack).reset().endl();
@@ -241,7 +250,7 @@ export class Logger {
 				this.#printer.reset().background("white").color("black").write(error).reset().endl();
 			}else{
 				for(let i=0; i<error.length; i++){
-					this.#addStackFrameInfo(error[i], this.#printer, i==0, 'Logged', 'cyan');
+					this.#addStackFrameInfo(error[i], this.#printer, i==0, 'Thrown', 'magenta');
 				}
 			}
 		}
