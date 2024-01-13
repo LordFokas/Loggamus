@@ -1,6 +1,6 @@
 {
-  "name": "loggamus",
-  "version": "1.6.0",
+  "name": "@lordfokas/loggamus",
+  "version": "2.0.0",
   "type": "module",
   "description": "An easy to use out-of-the-box, flexible and configurable logger for NodeJS, with no required external dependencies! Now with TypeScript support.",
   "main": "dist/index.js",
@@ -29,8 +29,7 @@
     "url": "https://github.com/LordFokas/Loggamus/issues"
   },
   "homepage": "https://github.com/LordFokas/Loggamus#readme",
-  "dependencies": {},
   "devDependencies": {
-    "@types/node": "^17.0.8"
+    "@types/node": "^20.11.0"
   }
 }
